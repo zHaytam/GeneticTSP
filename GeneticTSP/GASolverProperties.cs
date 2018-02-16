@@ -15,16 +15,25 @@
 
         public bool Elitism { get; set; }
 
+        public CrossoverMethod CrossoverMethod { get; set; }
+
         #endregion
 
-        public GASolverProperties(int maxGenerations, int populationsSize, double mutationRate, int tournamentSize, bool elitism)
+        public GASolverProperties(int maxGenerations, int populationsSize, double mutationRate, int tournamentSize, bool elitism, CrossoverMethod crossoverMethod)
         {
             MaxGenerations = maxGenerations;
             PopulationsSize = populationsSize;
             MutationRate = mutationRate;
             TournamentSize = tournamentSize;
             Elitism = elitism;
+            CrossoverMethod = crossoverMethod;
         }
 
+    }
+
+    public enum CrossoverMethod
+    {
+        Ordered,
+        Cycle
     }
 }

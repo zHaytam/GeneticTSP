@@ -27,6 +27,8 @@ namespace GeneticTSP
         {
             using (var fbd = new FolderBrowserDialog())
             {
+                fbd.SelectedPath = "D:\\Learning\\GeneticTSP\\TSPLIB95";
+
                 if (fbd.ShowDialog() != DialogResult.OK)
                     return;
 
@@ -73,7 +75,7 @@ namespace GeneticTSP
             CitiesHolder.SetCities(nodesProvider);
 
             var solver = new GASolver();
-            solver.Solve();
+            var result = solver.Solve();
         }
 
         #endregion

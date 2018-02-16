@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GeneticTSP
+﻿namespace GeneticTSP
 {
     public class GASolver
     {
@@ -19,9 +13,13 @@ namespace GeneticTSP
 
         public GASolverProperties Properties { get; }
 
+        public double BestDistance => _currentPopulation?.GetFittestTour().GetDistance() ?? 0;
+
+        public double BestFitness => _currentPopulation?.GetFittestTour().GetFitness() ?? 0;
+
         #endregion
 
-        public GASolver() : this(new GASolverProperties(100, 50, 0.02, 5, true)) { }
+        public GASolver() : this(new GASolverProperties(10, 50, 0.02, 5, true, CrossoverMethod.Ordered)) { }
 
         public GASolver(GASolverProperties properties)
         {
@@ -31,12 +29,22 @@ namespace GeneticTSP
 
         #region Public Methods
 
-        public void Solve()
+        public GASolverResult Solve()
         {
+            var fittestTour = _currentPopulation.GetFittestTour();
+
             for (int i = 0; i < Properties.MaxGenerations; i++)
             {
                 EvolvePopulation();
+
+                var tempFittest = _currentPopulation.GetFittestTour();
+                if (tempFittest.GetFitness() > fittestTour.GetFitness())
+                {
+                    fittestTour = tempFittest;
+                }
             }
+
+            return new GASolverResult(_currentPopulation, fittestTour);
         }
 
         #endregion
@@ -65,7 +73,8 @@ namespace GeneticTSP
                 var parent2 = TournamentSelection(parent1);
 
                 // Generate a child tour with Crossover
-                var child = Crossover(parent1, parent2);
+                var child = CrossoverHandler.Crossover(parent1, parent2, Properties.CrossoverMethod);
+                // Console.WriteLine("Distance of new child tour: {0}", child.GetDistance());
 
                 // Mutate the new child before adding it to the new population
                 Mutate(child);
@@ -75,34 +84,25 @@ namespace GeneticTSP
             _currentPopulation = newPop;
         }
 
-        private Tour Crossover(Tour parent1, Tour parent2)
-        {
-            var child = new Tour(false);
-
-            // Choose a random subset from parent1
-            CryptoRandom.GetRandomMinMax(parent1.Size, out int min, out int max);
-
-            Console.WriteLine(min + " , " + max);
-
-            // Add it to the new child tour
-            for (int i = min; i < max; i++)
-            {
-                
-            }
-
-            return null;
-        }
-
         private void Mutate(Tour tour)
         {
-            
+            for (int i = 0; i < tour.Size; i++)
+            {
+                if (CryptoRandom.NextDouble() >= Properties.MutationRate)
+                    continue;
+
+                int index = CryptoRandom.Next(tour.Size);
+                var temp = tour.Cities[i];
+                tour.SetCity(i, tour.Cities[index]);
+                tour.SetCity(index, temp);
+            }
         }
 
         private Tour TournamentSelection(Tour tourToExclude = null)
         {
             var tempPop = new Population(Properties.TournamentSize, false);
 
-            for (int i = 0; i < tempPop.Size; i++)
+            for (int i = 0; i < Properties.TournamentSize; i++)
             {
                 int index = CryptoRandom.Next(_currentPopulation.Size);
                 var tempTour = _currentPopulation.Tours[index];

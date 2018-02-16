@@ -20,6 +20,12 @@ namespace GeneticTSP
             Y = node.Y;
         }
 
+        public City(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
+
         #region Public Methods
 
         public double DistanceTo(City city)

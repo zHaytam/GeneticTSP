@@ -50,9 +50,11 @@
   <ItemGroup>
     <Compile Include="CitiesHolder.cs" />
     <Compile Include="City.cs" />
+    <Compile Include="CrossoverHandler.cs" />
     <Compile Include="CryptoRandom.cs" />
     <Compile Include="GASolver.cs" />
     <Compile Include="GASolverProperties.cs" />
+    <Compile Include="GASolverResult.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

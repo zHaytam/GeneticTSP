@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GeneticTSP
@@ -24,10 +25,7 @@ namespace GeneticTSP
 
         public Tour(bool initialize)
         {
-            if (initialize)
-            {
-                Cities = CitiesHolder.GetShuffledCopy();
-            }
+            Cities = initialize ? CitiesHolder.GetShuffledCopy() : Enumerable.Repeat<City>(null, CitiesHolder.Cities.Count).ToList();
         }
 
         #region Public Methods
