@@ -8,6 +8,8 @@ namespace GeneticTSP
 
         #region Properties
 
+        public int Id { get; }
+
         public double X { get; }
 
         public double Y { get; }
@@ -16,6 +18,7 @@ namespace GeneticTSP
 
         public City(Node2D node)
         {
+            Id = node.Id;
             X = node.X;
             Y = node.Y;
         }

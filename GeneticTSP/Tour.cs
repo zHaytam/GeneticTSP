@@ -9,6 +9,8 @@ namespace GeneticTSP
 
         #region Fields
 
+        private readonly HashSet<int> _ids;
+
         private double? _distance;
 
         private double? _fitness;
@@ -25,18 +27,35 @@ namespace GeneticTSP
 
         public Tour(bool initialize)
         {
-            Cities = initialize ? CitiesHolder.GetShuffledCopy() : Enumerable.Repeat<City>(null, CitiesHolder.Cities.Count).ToList();
+            _ids = new HashSet<int>();
+
+            if (initialize)
+            {
+                Cities = CitiesHolder.GetShuffledCopy();
+                Cities.ForEach(c => _ids.Add(c.Id));
+            }
+            else
+            {
+                Cities = Enumerable.Repeat<City>(null, CitiesHolder.Cities.Count).ToList();
+            }
         }
 
         #region Public Methods
 
         public void SetCity(int index, City city)
         {
+            var oldCity = Cities[index];
+            if (oldCity != null)
+                _ids.Remove(oldCity.Id);
+
             Cities[index] = city;
+            _ids.Add(city.Id);
 
             // Clear the distance/fitness cache
             _distance = _fitness = null;
         }
+
+        public bool ContainsCity(City city) => _ids.Contains(city.Id);
 
         public double GetDistance()
         {
@@ -76,8 +95,6 @@ namespace GeneticTSP
 
             return sb.ToString();
         }
-
-        public bool ContainsCity(City city) => Cities.Contains(city);
 
         #endregion
 

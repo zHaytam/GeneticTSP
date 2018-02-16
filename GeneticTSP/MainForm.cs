@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using TspLibNet;
@@ -59,7 +60,8 @@ namespace GeneticTSP
                     }
 
                     TsmiSelectProblem.Enabled = true;
-
+                    TsmiLoadProblems.Enabled = false;
+                    TsmiLoadProblems.Text = $"{_tspItems.Count} Problems loaded";
                 }
                 catch
                 {
@@ -74,8 +76,10 @@ namespace GeneticTSP
             var nodesProvider = item?.Problem.NodeProvider as NodeListBasedNodeProvider;
             CitiesHolder.SetCities(nodesProvider);
 
+            var sw = Stopwatch.StartNew();
             var solver = new GASolver();
-            var result = solver.Solve();
+            solver.Solve();
+            Console.WriteLine(solver.BestDistance + " in " + sw.Elapsed.TotalMilliseconds);
         }
 
         #endregion

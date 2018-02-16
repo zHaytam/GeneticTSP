@@ -1,4 +1,6 @@
-﻿namespace GeneticTSP
+﻿using System;
+
+namespace GeneticTSP
 {
     public class GASolver
     {
@@ -19,18 +21,18 @@
 
         #endregion
 
-        public GASolver() : this(new GASolverProperties(10, 50, 0.02, 5, true, CrossoverMethod.Ordered)) { }
+        public GASolver() : this(new GASolverProperties(1000000, 20, 0.015, 5, true, CrossoverMethod.Ordered)) { }
 
         public GASolver(GASolverProperties properties)
         {
             Properties = properties;
-            _currentPopulation = new Population(Properties.PopulationsSize, true);
         }
 
         #region Public Methods
 
         public GASolverResult Solve()
         {
+            _currentPopulation = new Population(Properties.PopulationsSize, true);
             var fittestTour = _currentPopulation.GetFittestTour();
 
             for (int i = 0; i < Properties.MaxGenerations; i++)
