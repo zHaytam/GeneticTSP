@@ -58,5 +58,24 @@ namespace GeneticTSP
             return Next(0, maxValue);
         }
 
+        /// <summary>
+        /// Returns two random indexs
+        /// </summary>
+        /// <param name="size">The maximum value to not exceed when generating</param>
+        /// <param name="min">The minimum value generated</param>
+        /// <param name="max">The maximum value generated</param>
+        public static void GetRandomMinMax(int size, out int min, out int max)
+        {
+            min = Next(size);
+            max = Next(size);
+
+            if (min <= max)
+                return;
+
+            int temp = min;
+            min = max;
+            max = temp;
+        }
+
     }
 }

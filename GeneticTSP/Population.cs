@@ -9,7 +9,7 @@ namespace GeneticTSP
 
         public List<Tour> Tours { get; }
 
-        public int Size => Tours.Count;
+        public int Size => Tours.Count == 0 ? Tours.Capacity : Tours.Count;
 
         #endregion
 

@@ -52,6 +52,7 @@
     <Compile Include="City.cs" />
     <Compile Include="CryptoRandom.cs" />
     <Compile Include="GASolver.cs" />
+    <Compile Include="GASolverProperties.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

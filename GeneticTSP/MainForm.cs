@@ -71,6 +71,9 @@ namespace GeneticTSP
             var item = (sender as ToolStripMenuItem)?.Tag as TspLib95Item;
             var nodesProvider = item?.Problem.NodeProvider as NodeListBasedNodeProvider;
             CitiesHolder.SetCities(nodesProvider);
+
+            var solver = new GASolver();
+            solver.Solve();
         }
 
         #endregion

@@ -28,11 +28,11 @@ namespace GeneticTSP
 
             while (n > 1)
             {
+                n--;
                 int i = CryptoRandom.Next(n + 1);
                 var temp = shuffledList[i];
                 shuffledList[i] = shuffledList[n];
                 shuffledList[n] = temp;
-                n--;
             }
 
             return shuffledList;
