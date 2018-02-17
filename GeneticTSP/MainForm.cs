@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using TspLibNet;
@@ -40,9 +39,17 @@ namespace GeneticTSP
                 TsmiStartSolving.Enabled = true;
                 TsmiStopSolving.Enabled = false;
                 GC.Collect();
+
+                
             }));
 
-            _gaSolver.NewFittest += () => BeginInvoke(new Action(Invalidate));
+            _gaSolver.NewFittest += () => BeginInvoke((Action)(() =>
+            {
+                TsslBestDistance.Text = $"Best distance so far: {_gaSolver.CurrentBestDistance}";
+                TsslBestFitness.Text = $"Best fitness so far: {_gaSolver.CurrentBestFitness}";
+                Invalidate();
+            }));
+
             Resize += (s, e) => SetDimensions();
         }
 
@@ -106,7 +113,11 @@ namespace GeneticTSP
 
         private void TsmiStartSolving_Click(object sender, EventArgs e)
         {
-            _gaSolver.StartSolving();
+            _gaSolver.StartSolving(new Progress<int>(p =>
+            {
+                TspbGeneration.Value = p;
+                TsslGeneration.Text = $"Generation {p} of {_gaSolver.Properties.MaxGenerations}";
+            }));
         }
 
         private void TsmiStopSolving_Click(object sender, EventArgs e)
@@ -121,9 +132,10 @@ namespace GeneticTSP
                 Text = "GA Properties",
                 Size = new Size(400, 400),
                 FormBorderStyle = FormBorderStyle.FixedSingle,
+                StartPosition = FormStartPosition.CenterParent,
                 MaximizeBox = false,
                 MinimizeBox = false,
-                StartPosition = FormStartPosition.CenterParent
+                Icon = Icon
             };
 
             var propertyGrid = new PropertyGrid
@@ -134,6 +146,7 @@ namespace GeneticTSP
 
             tempForm.Controls.Add(propertyGrid);
             tempForm.ShowDialog();
+            TspbGeneration.Maximum = _gaSolver.Properties.MaxGenerations;
         }
 
         #endregion
@@ -190,16 +203,16 @@ namespace GeneticTSP
                     maxY = city.Y;
             }
 
-            _widthOffset = (minX >= 0 ? 0 : Math.Abs(minX)) + 10;
-            _heightOffset = (minY >= 0 ? 0 : Math.Abs(minY));
+            _widthOffset = minX >= 0 ? 0 : Math.Abs(minX);
+            _heightOffset = minY >= 0 ? 0 : Math.Abs(minY);
             double maxWidth = maxX + _widthOffset;
             double maxHeight = maxY + _heightOffset;
 
-            double x = Width / maxWidth;
-            double y = Height / maxHeight;
+            double x = ClientRectangle.Width / maxWidth;
+            double y = (ClientRectangle.Height - statusStrip1.Height) / maxHeight;
 
-            _zoomX = x >= 1 ? (float)x - 0.2f : 1;
-            _zoomY = y >= 1 ? (float)y - 0.2f : 1;
+            _zoomX = x >= 1 ? (float)x - 0.1f : 1;
+            _zoomY = y >= 1 ? (float)y - 0.1f : 1;
         }
 
         private PointF CreatePointF(City city)

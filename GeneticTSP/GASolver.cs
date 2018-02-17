@@ -44,7 +44,7 @@ namespace GeneticTSP
 
         #region Public Methods
 
-        public void StartSolving()
+        public void StartSolving(IProgress<int> progress)
         {
             _cancellationTokenSource = new CancellationTokenSource();
             CurrentPopulation = new Population(Properties.PopulationsSize, true);
@@ -60,11 +60,14 @@ namespace GeneticTSP
                     EvolvePopulation();
 
                     var tempFittest = CurrentPopulation.GetFittestTour();
-                    if (tempFittest.GetFitness() <= FittestTour.GetFitness())
-                        continue;
+                    if (tempFittest.GetFitness() > FittestTour.GetFitness())
+                    {
+                        FittestTour = tempFittest;
+                        NewFittest?.Invoke();
+                    }
 
-                    FittestTour = tempFittest;
-                    NewFittest?.Invoke();
+                    // Report the progress
+                    progress.Report(i + 1);
                 }
 
                 Stopped?.Invoke();
