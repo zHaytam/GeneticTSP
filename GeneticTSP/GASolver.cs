@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,7 +31,7 @@ namespace GeneticTSP
         #region Events
 
         public event Action Started;
-        public event Action Stopped;
+        public event Action<double> Stopped;
         public event Action NewFittest;
 
         #endregion
@@ -47,6 +48,8 @@ namespace GeneticTSP
         public void StartSolving(IProgress<int> progress)
         {
             _cancellationTokenSource = new CancellationTokenSource();
+            var stopwatch = Stopwatch.StartNew();
+
             CurrentPopulation = new Population(Properties.PopulationsSize, true);
             FittestTour = CurrentPopulation.GetFittestTour();
 
@@ -70,7 +73,7 @@ namespace GeneticTSP
                     progress.Report(i + 1);
                 }
 
-                Stopped?.Invoke();
+                Stopped?.Invoke(stopwatch.Elapsed.TotalMilliseconds);
             }, 
             _cancellationTokenSource.Token);
 

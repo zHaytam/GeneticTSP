@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using TspLibNet;
 using TspLibNet.Graph.Nodes;
@@ -14,6 +16,7 @@ namespace GeneticTSP
         #region Fields
 
         private List<TspLib95Item> _tspItems;
+        private TspLib95Item _currentItem;
         private double _widthOffset;
         private double _heightOffset;
         private float _zoomX;
@@ -30,17 +33,32 @@ namespace GeneticTSP
 
             _gaSolver.Started += () =>
             {
+                TsmiSelectProblem.Enabled = false;
                 TsmiStartSolving.Enabled = false;
                 TsmiStopSolving.Enabled = true;
             };
 
-            _gaSolver.Stopped += () => BeginInvoke((Action)(() =>
+            _gaSolver.Stopped += elapsed => BeginInvoke((Action)(() =>
             {
+                TsmiSelectProblem.Enabled = true;
                 TsmiStartSolving.Enabled = true;
                 TsmiStopSolving.Enabled = false;
                 GC.Collect();
 
-                
+                var result = MessageBox.Show(GenerateSummary(elapsed), "Finished solving", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.No)
+                    return;
+
+                using (var sfd = new SaveFileDialog())
+                {
+                    sfd.Filter = "Text file (.txt) | *.txt";
+                    sfd.FileName = $"{_currentItem.Problem.Name}_{DateTime.Now:dd-MM-yyyy_HH-mm-ss}";
+
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        File.WriteAllText(sfd.FileName, GenerateResults(elapsed));
+                    }
+                }
             }));
 
             _gaSolver.NewFittest += () => BeginInvoke((Action)(() =>
@@ -103,11 +121,11 @@ namespace GeneticTSP
 
         private void SelectProblem_Click(object sender, EventArgs e)
         {
-            var item = (sender as ToolStripMenuItem)?.Tag as TspLib95Item;
-            var nodesProvider = item?.Problem.NodeProvider as NodeListBasedNodeProvider;
+            _currentItem = (sender as ToolStripMenuItem)?.Tag as TspLib95Item;
+            var nodesProvider = _currentItem?.Problem.NodeProvider as NodeListBasedNodeProvider;
             CitiesHolder.SetCities(nodesProvider);
             TsmiStartSolving.Enabled = true;
-            TsmiSelectProblem.Text = $"Current problem: {item?.Problem.Name} ({CitiesHolder.Cities.Count} cities)";
+            TsmiSelectProblem.Text = $"Current problem: {_currentItem?.Problem.Name} ({CitiesHolder.Cities.Count} cities)";
             SetDimensions();
         }
 
@@ -218,6 +236,67 @@ namespace GeneticTSP
         private PointF CreatePointF(City city)
         {
             return new PointF((float)(city.X + _widthOffset) * _zoomX, (float)(city.Y + _heightOffset) * _zoomY);
+        }
+
+        private string GenerateSummary(double elapsed)
+        {
+            var sb = new StringBuilder();
+
+            double bestDistance = _gaSolver.CurrentBestDistance;
+
+            sb.AppendLine($"Finished in {elapsed / 1000} seconds.");
+            sb.AppendLine($"Best distance found: {bestDistance} (Optimal: {_currentItem.OptimalTourDistance}).");
+
+            double distanceGap = 0;
+            try
+            {
+                distanceGap = (bestDistance - _currentItem.OptimalTourDistance) / bestDistance * 100;
+            }
+            catch
+            {
+                // Ignored
+            }
+
+            sb.AppendLine($"Distance GAP: {distanceGap}%");
+            sb.AppendLine($"Best fitness found: {_gaSolver.CurrentBestFitness}.");
+
+            sb.AppendLine();
+            sb.AppendLine("Do you wish to save the results?");
+
+            return sb.ToString();
+        }
+
+        private string GenerateResults(double elapsed)
+        {
+            var sb = new StringBuilder();
+
+            double bestDistance = _gaSolver.CurrentBestDistance;
+            double distanceGap = 0;
+
+            try
+            {
+                distanceGap = (bestDistance - _currentItem.OptimalTourDistance) / bestDistance * 100;
+            }
+            catch
+            {
+                // Ignored
+            }
+
+            sb.AppendLine($"GENERATIONS\t{_gaSolver.Properties.MaxGenerations}");
+            sb.AppendLine($"POPULATIONS_SIZE\t{_gaSolver.Properties.PopulationsSize}");
+            sb.AppendLine($"TOURNAMENT_SIZE\t{_gaSolver.Properties.TournamentSize}");
+            sb.AppendLine($"MUTATION_RATE\t{_gaSolver.Properties.MutationRate}");
+            sb.AppendLine($"ELITISM\t{_gaSolver.Properties.Elitism}");
+
+            sb.AppendLine($"TIME\t{elapsed}");
+            sb.AppendLine($"BEST_DISTANCE\t{bestDistance}");
+            sb.AppendLine($"BEST_FITNESS\t{_gaSolver.CurrentBestFitness}");
+            sb.AppendLine($"DISTANCE_GAP\t{distanceGap}");
+
+            sb.AppendLine($"DIMENSION\t{_gaSolver.FittestTour.Size}");
+            _gaSolver.FittestTour.Cities.ForEach(c => sb.AppendLine(c.Id.ToString()));
+
+            return sb.ToString();
         }
 
         #endregion
