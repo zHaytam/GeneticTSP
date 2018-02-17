@@ -70,10 +70,10 @@ namespace GeneticTSP
             //        true,
             //        CrossoverMethod.Ordered));
 
-            //    //Console.WriteLine("Initial distance: " + solver.BestDistance);
-            //    //var result = solver.Solve();
-            //    //Console.WriteLine("Final distance: " + solver.BestDistance + ", Final fitness: " + solver.BestFitness);
-            //    results.Add(solver.Solve().FittestTour.GetDistance());
+            //    //Console.WriteLine("Initial distance: " + solver.CurrentBestDistance);
+            //    //var result = solver.StartSolving();
+            //    //Console.WriteLine("Final distance: " + solver.CurrentBestDistance + ", Final fitness: " + solver.CurrentBestFitness);
+            //    results.Add(solver.StartSolving().FittestTour.GetDistance());
             //});
 
             //Console.WriteLine("min = {0}, max = {1}, avg = {2}", results.Min(), results.Max(), results.Average());

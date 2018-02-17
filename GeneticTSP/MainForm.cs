@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using TspLibNet;
@@ -14,12 +15,35 @@ namespace GeneticTSP
         #region Fields
 
         private List<TspLib95Item> _tspItems;
+        private double _widthOffset;
+        private double _heightOffset;
+        private float _zoomX;
+        private float _zoomY;
+        private readonly GASolver _gaSolver;
 
         #endregion
 
         public MainForm()
         {
             InitializeComponent();
+
+            _gaSolver = new GASolver();
+
+            _gaSolver.Started += () =>
+            {
+                TsmiStartSolving.Enabled = false;
+                TsmiStopSolving.Enabled = true;
+            };
+
+            _gaSolver.Stopped += () => BeginInvoke((Action)(() =>
+            {
+                TsmiStartSolving.Enabled = true;
+                TsmiStopSolving.Enabled = false;
+                GC.Collect();
+            }));
+
+            _gaSolver.NewFittest += () => BeginInvoke(new Action(Invalidate));
+            Resize += (s, e) => SetDimensions();
         }
 
         #region UI Events
@@ -69,17 +93,118 @@ namespace GeneticTSP
                 }
             }
         }
-        
+
         private void SelectProblem_Click(object sender, EventArgs e)
         {
             var item = (sender as ToolStripMenuItem)?.Tag as TspLib95Item;
             var nodesProvider = item?.Problem.NodeProvider as NodeListBasedNodeProvider;
             CitiesHolder.SetCities(nodesProvider);
+            TsmiStartSolving.Enabled = true;
+            TsmiSelectProblem.Text = $"Current problem: {item?.Problem.Name} ({CitiesHolder.Cities.Count} cities)";
+            SetDimensions();
+        }
 
-            var sw = Stopwatch.StartNew();
-            var solver = new GASolver();
-            solver.Solve();
-            Console.WriteLine(solver.BestDistance + " in " + sw.Elapsed.TotalMilliseconds);
+        private void TsmiStartSolving_Click(object sender, EventArgs e)
+        {
+            _gaSolver.StartSolving();
+        }
+
+        private void TsmiStopSolving_Click(object sender, EventArgs e)
+        {
+            _gaSolver.StopSolving();
+        }
+
+        private void TsmiProperties_Click(object sender, EventArgs e)
+        {
+            var tempForm = new Form
+            {
+                Text = "GA Properties",
+                Size = new Size(400, 400),
+                FormBorderStyle = FormBorderStyle.FixedSingle,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                StartPosition = FormStartPosition.CenterParent
+            };
+
+            var propertyGrid = new PropertyGrid
+            {
+                Dock = DockStyle.Fill,
+                SelectedObject = _gaSolver.Properties
+            };
+
+            tempForm.Controls.Add(propertyGrid);
+            tempForm.ShowDialog();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            e.Graphics.Clear(Color.Black);
+
+            if (_gaSolver.FittestTour == null)
+                return;
+
+            DrawTour(_gaSolver.FittestTour, e.Graphics);
+        }
+
+        private void DrawTour(Tour tour, Graphics g)
+        {
+            var pts = new PointF[tour.Size];
+
+            for (int i = 0; i < tour.Size; i++)
+            {
+                var city = tour.Cities[i];
+                var p1 = CreatePointF(city);
+
+                g.FillEllipse(Brushes.White, new RectangleF(p1, new SizeF(6, 6)));
+                pts[i] = p1;
+            }
+
+            g.DrawPolygon(Pens.White, pts);
+        }
+
+        private void SetDimensions()
+        {
+            double minX = double.MaxValue;
+            double maxX = 0;
+            double minY = double.MaxValue;
+            double maxY = 0;
+
+            for (int i = 0; i < CitiesHolder.Cities.Count; i++)
+            {
+                var city = CitiesHolder.Cities[i];
+
+                if (city.X < minX)
+                    minX = city.X;
+
+                if (city.X > maxX)
+                    maxX = city.X;
+
+                if (city.Y < minY)
+                    minY = city.Y;
+
+                if (city.Y > maxY)
+                    maxY = city.Y;
+            }
+
+            _widthOffset = (minX >= 0 ? 0 : Math.Abs(minX)) + 10;
+            _heightOffset = (minY >= 0 ? 0 : Math.Abs(minY));
+            double maxWidth = maxX + _widthOffset;
+            double maxHeight = maxY + _heightOffset;
+
+            double x = Width / maxWidth;
+            double y = Height / maxHeight;
+
+            _zoomX = x >= 1 ? (float)x - 0.2f : 1;
+            _zoomY = y >= 1 ? (float)y - 0.2f : 1;
+        }
+
+        private PointF CreatePointF(City city)
+        {
+            return new PointF((float)(city.X + _widthOffset) * _zoomX, (float)(city.Y + _heightOffset) * _zoomY);
         }
 
         #endregion

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace GeneticTSP
 {
@@ -7,7 +9,7 @@ namespace GeneticTSP
 
         #region Fields
 
-        private Population _currentPopulation;
+        private CancellationTokenSource _cancellationTokenSource;
 
         #endregion
 
@@ -15,13 +17,25 @@ namespace GeneticTSP
 
         public GASolverProperties Properties { get; }
 
-        public double BestDistance => _currentPopulation?.GetFittestTour().GetDistance() ?? 0;
+        public Population CurrentPopulation { get; private set; }
 
-        public double BestFitness => _currentPopulation?.GetFittestTour().GetFitness() ?? 0;
+        public Tour FittestTour { get; private set; }
+
+        public double CurrentBestDistance => CurrentPopulation?.GetFittestTour().GetDistance() ?? 0;
+
+        public double CurrentBestFitness => CurrentPopulation?.GetFittestTour().GetFitness() ?? 0;
 
         #endregion
 
-        public GASolver() : this(new GASolverProperties(1000000, 20, 0.015, 5, true, CrossoverMethod.Ordered)) { }
+        #region Events
+
+        public event Action Started;
+        public event Action Stopped;
+        public event Action NewFittest;
+
+        #endregion
+
+        public GASolver() : this(new GASolverProperties(100, 20, 0.015, 5, true, CrossoverMethod.Ordered)) { }
 
         public GASolver(GASolverProperties properties)
         {
@@ -30,24 +44,37 @@ namespace GeneticTSP
 
         #region Public Methods
 
-        public GASolverResult Solve()
+        public void StartSolving()
         {
-            _currentPopulation = new Population(Properties.PopulationsSize, true);
-            var fittestTour = _currentPopulation.GetFittestTour();
+            _cancellationTokenSource = new CancellationTokenSource();
+            CurrentPopulation = new Population(Properties.PopulationsSize, true);
+            FittestTour = CurrentPopulation.GetFittestTour();
 
-            for (int i = 0; i < Properties.MaxGenerations; i++)
+            Task.Factory.StartNew(() =>
             {
-                EvolvePopulation();
-
-                var tempFittest = _currentPopulation.GetFittestTour();
-                if (tempFittest.GetFitness() > fittestTour.GetFitness())
+                for (int i = 0; i < Properties.MaxGenerations; i++)
                 {
-                    fittestTour = tempFittest;
-                }
-            }
+                    if (_cancellationTokenSource.IsCancellationRequested)
+                        break;
 
-            return new GASolverResult(_currentPopulation, fittestTour);
+                    EvolvePopulation();
+
+                    var tempFittest = CurrentPopulation.GetFittestTour();
+                    if (tempFittest.GetFitness() <= FittestTour.GetFitness())
+                        continue;
+
+                    FittestTour = tempFittest;
+                    NewFittest?.Invoke();
+                }
+
+                Stopped?.Invoke();
+            }, 
+            _cancellationTokenSource.Token);
+
+            Started?.Invoke();
         }
+
+        public void StopSolving() => _cancellationTokenSource?.Cancel();
 
         #endregion
 
@@ -55,7 +82,7 @@ namespace GeneticTSP
 
         private void EvolvePopulation()
         {
-            if (_currentPopulation == null)
+            if (CurrentPopulation == null)
                 return;
 
             var newPop = new Population(Properties.PopulationsSize, false);
@@ -64,7 +91,7 @@ namespace GeneticTSP
             // If elitism is true, add the fittest
             if (Properties.Elitism)
             {
-                newPop.Tours.Add(_currentPopulation.GetFittestTour());
+                newPop.Tours.Add(CurrentPopulation.GetFittestTour());
                 startingIndex++;
             }
 
@@ -83,7 +110,7 @@ namespace GeneticTSP
                 newPop.Tours.Add(child);
             }
 
-            _currentPopulation = newPop;
+            CurrentPopulation = newPop;
         }
 
         private void Mutate(Tour tour)
@@ -106,8 +133,8 @@ namespace GeneticTSP
 
             for (int i = 0; i < Properties.TournamentSize; i++)
             {
-                int index = CryptoRandom.Next(_currentPopulation.Size);
-                var tempTour = _currentPopulation.Tours[index];
+                int index = CryptoRandom.Next(CurrentPopulation.Size);
+                var tempTour = CurrentPopulation.Tours[index];
 
                 // In case we found the tour we wanted to tourToExclude
                 if (tourToExclude != null && tempTour == tourToExclude)

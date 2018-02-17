@@ -57,7 +57,6 @@
     <Compile Include="CryptoRandom.cs" />
     <Compile Include="GASolver.cs" />
     <Compile Include="GASolverProperties.cs" />
-    <Compile Include="GASolverResult.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -97,6 +96,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="if_24_DNA_2064499.ico" />
+    <None Include="Resources\stopwatch_start16.png" />
+    <None Include="Resources\stopwatch_finish16.png" />
+    <None Include="Resources\stopwatch_finish32.png" />
+    <None Include="Resources\stopwatch_start32.png" />
+    <None Include="Resources\stop-24.png" />
+    <None Include="Resources\play-24 %281%29.png" />
+    <None Include="Resources\package_settings24.png" />
+    <None Include="Resources\settings261.png" />
+    <None Include="Resources\Settings-24.png" />
+    <None Include="Resources\settings26.png" />
     <None Include="Resources\arrow-down-01-24.png" />
     <None Include="Resources\folder-24.png" />
   </ItemGroup>
