@@ -36,7 +36,7 @@ namespace GeneticTSP
 
         #endregion
 
-        public GASolver() : this(new GASolverProperties(100, 20, 0.015, 5, true, CrossoverMethod.Ordered)) { }
+        public GASolver() : this(new GASolverProperties(100, 20, 0.015, 5, true, CrossoverMethod.ImprovedGreedy)) { }
 
         public GASolver(GASolverProperties properties)
         {

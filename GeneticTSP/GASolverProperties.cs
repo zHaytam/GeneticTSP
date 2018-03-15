@@ -34,6 +34,7 @@
     public enum CrossoverMethod
     {
         Ordered,
-        Cycle
+        Cycle,
+        ImprovedGreedy
     }
 }

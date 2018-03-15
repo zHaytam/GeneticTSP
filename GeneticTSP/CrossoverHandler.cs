@@ -12,12 +12,12 @@ namespace GeneticTSP
         {
             switch (method)
             {
-                case CrossoverMethod.Ordered:
-                    return OrderedCrossover(parent1, parent2);
                 case CrossoverMethod.Cycle:
                     return CycleCrossover(parent1, parent2);
+                case CrossoverMethod.ImprovedGreedy:
+                    return ImprovedGreedyCrossover(parent1, parent2);
                 default:
-                    return null;
+                    return OrderedCrossover(parent1, parent2);
             }
         }
 
@@ -29,7 +29,6 @@ namespace GeneticTSP
         {
             var child = new Tour(false);
             CryptoRandom.GetRandomMinMax(parent1.Size, out int min, out int max);
-            // Console.WriteLine("min = {0}, max = {1}, start = {2}", min, max, parent1.Cities[min]);
 
             for (int i = min; i <= max; i++)
             {
@@ -77,6 +76,72 @@ namespace GeneticTSP
 
                 child.SetCity(i, parent2.Cities[i]);
             }
+
+            return child;
+        }
+
+        private static Tour ImprovedGreedyCrossover(Tour parent1, Tour parent2)
+        {
+
+            // Initialize the parents doubly linked lists and the new child tour
+            var parent1Dll = new LinkedList<City>();
+            var parent2Dll = new LinkedList<City>();
+            var child = new Tour(false);
+            int i = 0;
+
+            // Fill the doubly linked lists
+            parent1.Cities.ForEach(parent1Dll.Add);
+            parent2.Cities.ForEach(parent2Dll.Add);
+
+            // First city
+            int index = CryptoRandom.Next(0, parent1Dll.Count);
+            var node1 = parent1Dll.GetAt(index);
+            var node2 = parent2Dll.Find(node1.Data);
+            var city = node1.Data;
+
+            child.SetCity(i, city);
+            parent1Dll.Remove(city);
+            parent2Dll.Remove(city);
+
+            LinkedListNode<City> CetClosestNeighbour(LinkedListNode<City>[] neighbors)
+            {
+                var closest = neighbors[0];
+                var bestDistance = closest.Data.DistanceTo(city);
+
+                for (int j = 1; j < 4; j++)
+                {
+                    var tempDistance = neighbors[j].Data.DistanceTo(city);
+
+                    if (tempDistance < bestDistance)
+                    {
+                        closest = neighbors[j];
+                        bestDistance = tempDistance;
+                    }
+                }
+
+                return closest;
+            }
+
+            // Rest of the cities
+            for (i = 1; i < parent1.Size; i++)
+            {
+                LinkedListNode<City>[] neighbors = { node1.Previous, node1.Next, node2.Previous, node2.Next };
+
+                // Find the closest neighbor
+                var closestNeighbour = CetClosestNeighbour(neighbors);
+                city = closestNeighbour.Data;
+                node1 = parent1Dll.Find(city);
+                node2 = parent2Dll.Find(city);
+
+                // Add it to the child tour then remove it from the doubly linked lists
+                child.SetCity(i, city);
+                parent1Dll.Remove(city);
+                parent2Dll.Remove(city);
+            }
+
+            var parent1Fitness = parent1.GetFitness();
+            var parent2Fitness = parent2.GetFitness();
+            var childFitness = child.GetFitness();
 
             return child;
         }

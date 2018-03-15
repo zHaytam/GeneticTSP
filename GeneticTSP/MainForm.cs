@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using TspLibNet;
+using TspLibNet.DistanceFunctions;
+using TspLibNet.Graph.EdgeWeights;
 using TspLibNet.Graph.Nodes;
 
 namespace GeneticTSP
@@ -98,6 +100,9 @@ namespace GeneticTSP
 
                     foreach (var item in _tspItems)
                     {
+                        if (!(item.Problem.EdgeWeightsProvider is FunctionBasedWeightProvider))
+                            continue;
+
                         var newMenuItem = new ToolStripMenuItem
                         {
                             Text = item.Problem.Name,
