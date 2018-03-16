@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TwoOptHeuristic.cs" />
     <Compile Include="CitiesHolder.cs" />
     <Compile Include="City.cs" />
     <Compile Include="CrossoverHandler.cs" />

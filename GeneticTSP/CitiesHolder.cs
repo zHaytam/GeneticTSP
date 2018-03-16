@@ -38,6 +38,63 @@ namespace GeneticTSP
             return shuffledList;
         }
 
+        public static List<City> GetGreedyCopy()
+        {
+            var copy = Cities.ToList();
+            int ri = (int)(copy.Count * 0.2);
+            var greedyList = new List<City>();
+
+            for (int i = 0; i < ri; i++)
+            {
+                int index = CryptoRandom.Next(0, copy.Count);
+                greedyList.Add(copy[index]);
+                copy.RemoveAt(index);
+            }
+
+            while (copy.Count != 0)
+            {
+                int index = CryptoRandom.Next(0, copy.Count);
+
+                int c = greedyList.Count;
+                double bestDist = double.MaxValue;
+                int bestIndex = -1;
+
+                for (int i = 0; i <= c; i++)
+                {
+                    greedyList.Insert(i, copy[index]);
+
+                    var dist = CalculateDistance(greedyList);
+                    if (dist < bestDist)
+                    {
+                        bestDist = dist;
+                        bestIndex = i;
+                    }
+
+                    greedyList.RemoveAt(i);
+                }
+
+                greedyList.Insert(bestIndex, copy[index]);
+                copy.RemoveAt(index);
+            }
+
+            return greedyList;
+        }
+
+        public static double CalculateDistance(List<City> cities)
+        {
+            double distance = 0;
+
+            for (int i = 0; i < cities.Count; i++)
+            {
+                int index2 = i + 1;
+                if (index2 == cities.Count) index2 = 0;
+
+                distance += cities[i].DistanceTo(cities[index2]);
+            }
+
+            return distance;
+        }
+
         #endregion
 
     }

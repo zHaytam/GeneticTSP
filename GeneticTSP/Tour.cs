@@ -31,7 +31,8 @@ namespace GeneticTSP
 
             if (initialize)
             {
-                Cities = CitiesHolder.GetShuffledCopy();
+                // Cities = CitiesHolder.GetShuffledCopy();
+                Cities = CitiesHolder.GetGreedyCopy();
                 Cities.ForEach(c => _ids.Add(c.Id));
             }
             else

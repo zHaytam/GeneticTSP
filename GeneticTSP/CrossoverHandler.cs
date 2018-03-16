@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace GeneticTSP
 {
@@ -138,10 +137,6 @@ namespace GeneticTSP
                 parent1Dll.Remove(city);
                 parent2Dll.Remove(city);
             }
-
-            var parent1Fitness = parent1.GetFitness();
-            var parent2Fitness = parent2.GetFitness();
-            var childFitness = child.GetFitness();
 
             return child;
         }

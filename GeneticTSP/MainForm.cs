@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using TspLibNet;
-using TspLibNet.DistanceFunctions;
 using TspLibNet.Graph.EdgeWeights;
 using TspLibNet.Graph.Nodes;
 
@@ -136,6 +135,8 @@ namespace GeneticTSP
 
         private void TsmiStartSolving_Click(object sender, EventArgs e)
         {
+            TspbGeneration.Maximum = _gaSolver.Properties.MaxGenerations;
+
             _gaSolver.StartSolving(new Progress<int>(p =>
             {
                 TspbGeneration.Value = p;

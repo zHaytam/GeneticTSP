@@ -36,7 +36,7 @@ namespace GeneticTSP
 
         #endregion
 
-        public GASolver() : this(new GASolverProperties(100, 20, 0.015, 5, true, CrossoverMethod.ImprovedGreedy)) { }
+        public GASolver() : this(new GASolverProperties(500, 50, 0.015, 5, true, CrossoverMethod.ImprovedGreedy)) { }
 
         public GASolver(GASolverProperties properties)
         {
@@ -48,33 +48,17 @@ namespace GeneticTSP
         public void StartSolving(IProgress<int> progress)
         {
             _cancellationTokenSource = new CancellationTokenSource();
-            var stopwatch = Stopwatch.StartNew();
-
-            CurrentPopulation = new Population(Properties.PopulationsSize, true);
-            FittestTour = CurrentPopulation.GetFittestTour();
 
             Task.Factory.StartNew(() =>
             {
-                for (int i = 0; i < Properties.MaxGenerations; i++)
-                {
-                    if (_cancellationTokenSource.IsCancellationRequested)
-                        break;
+                // Initial population
+                CurrentPopulation = new Population(Properties.PopulationsSize, true);
+                FittestTour = CurrentPopulation.GetFittestTour();
+                NewFittest?.Invoke();
 
-                    EvolvePopulation();
-
-                    var tempFittest = CurrentPopulation.GetFittestTour();
-                    if (tempFittest.GetFitness() > FittestTour.GetFitness())
-                    {
-                        FittestTour = tempFittest;
-                        NewFittest?.Invoke();
-                    }
-
-                    // Report the progress
-                    progress.Report(i + 1);
-                }
-
-                Stopped?.Invoke(stopwatch.Elapsed.TotalMilliseconds);
-            }, 
+                // Start
+                Start(progress);
+            },
             _cancellationTokenSource.Token);
 
             Started?.Invoke();
@@ -85,6 +69,31 @@ namespace GeneticTSP
         #endregion
 
         #region Private Methods
+
+        private void Start(IProgress<int> progress)
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            for (int i = 0; i < Properties.MaxGenerations; i++)
+            {
+                if (_cancellationTokenSource.IsCancellationRequested)
+                    break;
+
+                EvolvePopulation();
+
+                var tempFittest = CurrentPopulation.GetFittestTour();
+                if (tempFittest.GetFitness() > FittestTour.GetFitness())
+                {
+                    FittestTour = tempFittest;
+                    NewFittest?.Invoke();
+                }
+
+                // Report the progress
+                progress?.Report(i + 1);
+            }
+
+            Stopped?.Invoke(stopwatch.Elapsed.TotalMilliseconds);
+        }
 
         private void EvolvePopulation()
         {
@@ -109,10 +118,14 @@ namespace GeneticTSP
 
                 // Generate a child tour with Crossover
                 var child = CrossoverHandler.Crossover(parent1, parent2, Properties.CrossoverMethod);
-                // Console.WriteLine("Distance of new child tour: {0}", child.GetDistance());
 
-                // Mutate the new child before adding it to the new population
+                // Mutate the new child
                 Mutate(child);
+
+                // Apply 2-opt-heuristic
+                //child = TwoOptHeuristic.PerformOn(child);
+                TwoOptHeuristic.Apply(child);
+
                 newPop.Tours.Add(child);
             }
 
