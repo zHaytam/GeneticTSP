@@ -31,8 +31,7 @@ namespace GeneticTSP
 
             if (initialize)
             {
-                // Cities = CitiesHolder.GetShuffledCopy();
-                Cities = CitiesHolder.GetGreedyCopy();
+                Cities = GASolver.Properties.InitialPopulationMethod == InitialPopulationMethod.Greedy ? CitiesHolder.GetGreedyCopy() : CitiesHolder.GetShuffledCopy();
                 Cities.ForEach(c => _ids.Add(c.Id));
             }
             else

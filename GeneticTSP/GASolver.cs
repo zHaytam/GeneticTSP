@@ -16,7 +16,7 @@ namespace GeneticTSP
 
         #region Properties
 
-        public GASolverProperties Properties { get; }
+        public static GASolverProperties Properties { get; set; }
 
         public Population CurrentPopulation { get; private set; }
 
@@ -36,7 +36,7 @@ namespace GeneticTSP
 
         #endregion
 
-        public GASolver() : this(new GASolverProperties(500, 50, 0.015, 5, true, CrossoverMethod.ImprovedGreedy)) { }
+        public GASolver() : this(new GASolverProperties(20, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.Greedy, 0.1)) { }
 
         public GASolver(GASolverProperties properties)
         {

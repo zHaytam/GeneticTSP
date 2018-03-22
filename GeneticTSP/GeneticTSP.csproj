@@ -35,8 +35,22 @@
     <ApplicationIcon>if_24_DNA_2064499.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.WinForms, Version=0.9.7.1, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.WinForms.0.9.7.1\lib\net45\LiveCharts.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,8 +63,16 @@
     <Reference Include="TspLibNet, Version=1.0.5937.42569, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TSPLib.Net.1.1.5\lib\net451\TspLibNet.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MultiSolver.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MultiSolver.Designer.cs">
+      <DependentUpon>MultiSolver.cs</DependentUpon>
+    </Compile>
     <Compile Include="TwoOptHeuristic.cs" />
     <Compile Include="CitiesHolder.cs" />
     <Compile Include="City.cs" />
@@ -71,6 +93,9 @@
     <Compile Include="Tour.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MultiSolver.resx">
+      <DependentUpon>MultiSolver.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -98,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="if_24_DNA_2064499.ico" />
+    <None Include="Resources\graph_up_arrow-24.png" />
     <None Include="Resources\stopwatch_start16.png" />
     <None Include="Resources\stopwatch_finish16.png" />
     <None Include="Resources\stopwatch_finish32.png" />

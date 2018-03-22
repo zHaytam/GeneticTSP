@@ -41,7 +41,7 @@ namespace GeneticTSP
         public static List<City> GetGreedyCopy()
         {
             var copy = Cities.ToList();
-            int ri = (int)(copy.Count * 0.2);
+            int ri = (int)(copy.Count * GASolver.Properties.GreedyInitialPopulationRate);
             var greedyList = new List<City>();
 
             for (int i = 0; i < ri; i++)

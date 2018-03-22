@@ -30,11 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.TsmiLoadProblems = new System.Windows.Forms.ToolStripMenuItem();
-            this.TsmiSelectProblem = new System.Windows.Forms.ToolStripMenuItem();
-            this.TsmiStartSolving = new System.Windows.Forms.ToolStripMenuItem();
-            this.TsmiStopSolving = new System.Windows.Forms.ToolStripMenuItem();
-            this.TsmiProperties = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.TsslGeneration = new System.Windows.Forms.ToolStripStatusLabel();
             this.TspbGeneration = new System.Windows.Forms.ToolStripProgressBar();
@@ -42,6 +37,12 @@
             this.TsslBestDistance = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.TsslBestFitness = new System.Windows.Forms.ToolStripStatusLabel();
+            this.TsmiLoadProblems = new System.Windows.Forms.ToolStripMenuItem();
+            this.TsmiSelectProblem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TsmiStartSolving = new System.Windows.Forms.ToolStripMenuItem();
+            this.TsmiStopSolving = new System.Windows.Forms.ToolStripMenuItem();
+            this.TsmiProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this.multiSolverToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -54,56 +55,14 @@
             this.TsmiSelectProblem,
             this.TsmiStartSolving,
             this.TsmiStopSolving,
-            this.TsmiProperties});
+            this.TsmiProperties,
+            this.multiSolverToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 3, 0, 3);
             this.menuStrip1.Size = new System.Drawing.Size(944, 27);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
-            // 
-            // TsmiLoadProblems
-            // 
-            this.TsmiLoadProblems.Image = global::GeneticTSP.Properties.Resources.folder_24;
-            this.TsmiLoadProblems.Name = "TsmiLoadProblems";
-            this.TsmiLoadProblems.Size = new System.Drawing.Size(150, 21);
-            this.TsmiLoadProblems.Text = "Load TSP problems";
-            this.TsmiLoadProblems.Click += new System.EventHandler(this.TsmiLoadProblems_Click);
-            // 
-            // TsmiSelectProblem
-            // 
-            this.TsmiSelectProblem.Enabled = false;
-            this.TsmiSelectProblem.Image = global::GeneticTSP.Properties.Resources.arrow_down_01_24;
-            this.TsmiSelectProblem.Name = "TsmiSelectProblem";
-            this.TsmiSelectProblem.Size = new System.Drawing.Size(135, 21);
-            this.TsmiSelectProblem.Text = "Select a problem";
-            // 
-            // TsmiStartSolving
-            // 
-            this.TsmiStartSolving.Enabled = false;
-            this.TsmiStartSolving.Image = global::GeneticTSP.Properties.Resources.stopwatch_start16;
-            this.TsmiStartSolving.Name = "TsmiStartSolving";
-            this.TsmiStartSolving.Size = new System.Drawing.Size(63, 21);
-            this.TsmiStartSolving.Text = "Start";
-            this.TsmiStartSolving.Click += new System.EventHandler(this.TsmiStartSolving_Click);
-            // 
-            // TsmiStopSolving
-            // 
-            this.TsmiStopSolving.Enabled = false;
-            this.TsmiStopSolving.Image = global::GeneticTSP.Properties.Resources.stopwatch_finish16;
-            this.TsmiStopSolving.Name = "TsmiStopSolving";
-            this.TsmiStopSolving.Size = new System.Drawing.Size(63, 21);
-            this.TsmiStopSolving.Text = "Stop";
-            this.TsmiStopSolving.Click += new System.EventHandler(this.TsmiStopSolving_Click);
-            // 
-            // TsmiProperties
-            // 
-            this.TsmiProperties.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.TsmiProperties.Image = global::GeneticTSP.Properties.Resources.package_settings24;
-            this.TsmiProperties.Name = "TsmiProperties";
-            this.TsmiProperties.Size = new System.Drawing.Size(96, 21);
-            this.TsmiProperties.Text = "Properties";
-            this.TsmiProperties.Click += new System.EventHandler(this.TsmiProperties_Click);
             // 
             // statusStrip1
             // 
@@ -161,6 +120,57 @@
             this.TsslBestFitness.Size = new System.Drawing.Size(125, 17);
             this.TsslBestFitness.Text = "Best fitness so far: 0";
             // 
+            // TsmiLoadProblems
+            // 
+            this.TsmiLoadProblems.Image = global::GeneticTSP.Properties.Resources.folder_24;
+            this.TsmiLoadProblems.Name = "TsmiLoadProblems";
+            this.TsmiLoadProblems.Size = new System.Drawing.Size(150, 21);
+            this.TsmiLoadProblems.Text = "Load TSP problems";
+            this.TsmiLoadProblems.Click += new System.EventHandler(this.TsmiLoadProblems_Click);
+            // 
+            // TsmiSelectProblem
+            // 
+            this.TsmiSelectProblem.Enabled = false;
+            this.TsmiSelectProblem.Image = global::GeneticTSP.Properties.Resources.arrow_down_01_24;
+            this.TsmiSelectProblem.Name = "TsmiSelectProblem";
+            this.TsmiSelectProblem.Size = new System.Drawing.Size(135, 21);
+            this.TsmiSelectProblem.Text = "Select a problem";
+            // 
+            // TsmiStartSolving
+            // 
+            this.TsmiStartSolving.Enabled = false;
+            this.TsmiStartSolving.Image = global::GeneticTSP.Properties.Resources.stopwatch_start16;
+            this.TsmiStartSolving.Name = "TsmiStartSolving";
+            this.TsmiStartSolving.Size = new System.Drawing.Size(63, 21);
+            this.TsmiStartSolving.Text = "Start";
+            this.TsmiStartSolving.Click += new System.EventHandler(this.TsmiStartSolving_Click);
+            // 
+            // TsmiStopSolving
+            // 
+            this.TsmiStopSolving.Enabled = false;
+            this.TsmiStopSolving.Image = global::GeneticTSP.Properties.Resources.stopwatch_finish16;
+            this.TsmiStopSolving.Name = "TsmiStopSolving";
+            this.TsmiStopSolving.Size = new System.Drawing.Size(63, 21);
+            this.TsmiStopSolving.Text = "Stop";
+            this.TsmiStopSolving.Click += new System.EventHandler(this.TsmiStopSolving_Click);
+            // 
+            // TsmiProperties
+            // 
+            this.TsmiProperties.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.TsmiProperties.Image = global::GeneticTSP.Properties.Resources.package_settings24;
+            this.TsmiProperties.Name = "TsmiProperties";
+            this.TsmiProperties.Size = new System.Drawing.Size(96, 21);
+            this.TsmiProperties.Text = "Properties";
+            this.TsmiProperties.Click += new System.EventHandler(this.TsmiProperties_Click);
+            // 
+            // multiSolverToolStripMenuItem
+            // 
+            this.multiSolverToolStripMenuItem.Image = global::GeneticTSP.Properties.Resources.graph_up_arrow_24;
+            this.multiSolverToolStripMenuItem.Name = "multiSolverToolStripMenuItem";
+            this.multiSolverToolStripMenuItem.Size = new System.Drawing.Size(105, 21);
+            this.multiSolverToolStripMenuItem.Text = "Multi Solver";
+            this.multiSolverToolStripMenuItem.Click += new System.EventHandler(this.MultiSolverToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -201,6 +211,7 @@
         private System.Windows.Forms.ToolStripStatusLabel TsslBestDistance;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
         private System.Windows.Forms.ToolStripStatusLabel TsslBestFitness;
+        private System.Windows.Forms.ToolStripMenuItem multiSolverToolStripMenuItem;
     }
 }
 

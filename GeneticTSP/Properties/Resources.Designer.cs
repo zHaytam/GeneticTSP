@@ -83,6 +83,16 @@ namespace GeneticTSP.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap graph_up_arrow_24 {
+            get {
+                object obj = ResourceManager.GetObject("graph_up_arrow-24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap package_settings24 {
             get {
                 object obj = ResourceManager.GetObject("package_settings24", resourceCulture);

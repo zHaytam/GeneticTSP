@@ -135,12 +135,12 @@ namespace GeneticTSP
 
         private void TsmiStartSolving_Click(object sender, EventArgs e)
         {
-            TspbGeneration.Maximum = _gaSolver.Properties.MaxGenerations;
+            TspbGeneration.Maximum = GASolver.Properties.MaxGenerations;
 
             _gaSolver.StartSolving(new Progress<int>(p =>
             {
                 TspbGeneration.Value = p;
-                TsslGeneration.Text = $"Generation {p} of {_gaSolver.Properties.MaxGenerations}";
+                TsslGeneration.Text = $"Generation {p} of {GASolver.Properties.MaxGenerations}";
             }));
         }
 
@@ -165,12 +165,22 @@ namespace GeneticTSP
             var propertyGrid = new PropertyGrid
             {
                 Dock = DockStyle.Fill,
-                SelectedObject = _gaSolver.Properties
+                SelectedObject = GASolver.Properties
             };
 
             tempForm.Controls.Add(propertyGrid);
             tempForm.ShowDialog();
-            TspbGeneration.Maximum = _gaSolver.Properties.MaxGenerations;
+            TspbGeneration.Maximum = GASolver.Properties.MaxGenerations;
+        }
+
+        private void MultiSolverToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var x = Microsoft.VisualBasic.Interaction.InputBox("How many runs to process?", "Mutli Solver", "30");
+            if (!int.TryParse(x, out int runs))
+                return;
+
+            var multiSolverForm = new MultiSolver(GASolver.Properties, runs, _currentItem);
+            multiSolverForm.ShowDialog();
         }
 
         #endregion
@@ -288,11 +298,11 @@ namespace GeneticTSP
                 // Ignored
             }
 
-            sb.AppendLine($"GENERATIONS\t{_gaSolver.Properties.MaxGenerations}");
-            sb.AppendLine($"POPULATIONS_SIZE\t{_gaSolver.Properties.PopulationsSize}");
-            sb.AppendLine($"TOURNAMENT_SIZE\t{_gaSolver.Properties.TournamentSize}");
-            sb.AppendLine($"MUTATION_RATE\t{_gaSolver.Properties.MutationRate}");
-            sb.AppendLine($"ELITISM\t{_gaSolver.Properties.Elitism}");
+            sb.AppendLine($"GENERATIONS\t{GASolver.Properties.MaxGenerations}");
+            sb.AppendLine($"POPULATIONS_SIZE\t{GASolver.Properties.PopulationsSize}");
+            sb.AppendLine($"TOURNAMENT_SIZE\t{GASolver.Properties.TournamentSize}");
+            sb.AppendLine($"MUTATION_RATE\t{GASolver.Properties.MutationRate}");
+            sb.AppendLine($"ELITISM\t{GASolver.Properties.Elitism}");
 
             sb.AppendLine($"TIME\t{elapsed}");
             sb.AppendLine($"BEST_DISTANCE\t{bestDistance}");

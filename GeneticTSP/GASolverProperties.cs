@@ -16,10 +16,15 @@
         public bool Elitism { get; set; }
 
         public CrossoverMethod CrossoverMethod { get; set; }
+        
+        public InitialPopulationMethod InitialPopulationMethod { get; set; }
+
+        public double GreedyInitialPopulationRate { get; set; }
 
         #endregion
 
-        public GASolverProperties(int maxGenerations, int populationsSize, double mutationRate, int tournamentSize, bool elitism, CrossoverMethod crossoverMethod)
+        public GASolverProperties(int maxGenerations, int populationsSize, double mutationRate, int tournamentSize, bool elitism,
+            CrossoverMethod crossoverMethod, InitialPopulationMethod initialPopulationMethod, double greedyInitialPopulationRate)
         {
             MaxGenerations = maxGenerations;
             PopulationsSize = populationsSize;
@@ -27,6 +32,8 @@
             TournamentSize = tournamentSize;
             Elitism = elitism;
             CrossoverMethod = crossoverMethod;
+            InitialPopulationMethod = InitialPopulationMethod;
+            GreedyInitialPopulationRate = greedyInitialPopulationRate;
         }
 
     }
@@ -36,5 +43,11 @@
         Ordered,
         Cycle,
         ImprovedGreedy
+    }
+
+    public enum InitialPopulationMethod
+    {
+        Greedy,
+        Random
     }
 }
