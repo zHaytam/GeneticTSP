@@ -7,7 +7,7 @@ namespace GeneticTSP
 
         #region Properties
 
-        public List<Tour> Tours { get; }
+        public List<Tour> Tours { get; set; }
 
         public int Size => Tours.Count;
 
@@ -15,7 +15,7 @@ namespace GeneticTSP
 
         public Population(int populationSize, bool initialize)
         {
-            Tours = new List<Tour>(populationSize);
+            Tours = new List<Tour>();
 
             if (!initialize)
                 return;

@@ -1,4 +1,5 @@
 ﻿using System;
+using TspLibNet.Extensions;
 using TspLibNet.Graph.Nodes;
 
 namespace GeneticTSP
@@ -33,7 +34,10 @@ namespace GeneticTSP
 
         public double DistanceTo(City city)
         {
-            return Math.Sqrt(Math.Pow(city.X - X, 2) + Math.Pow(city.Y - Y, 2));
+            double num1 = X - city.X;
+            double num2 = Y - city.Y;
+            return MathExtensions.NearestInt(Math.Sqrt(num1 * num1 + num2 * num2));
+            // return Math.Sqrt(Math.Pow(city.X - X, 2) + Math.Pow(city.Y - Y, 2));
         }
 
         public override string ToString() => $"({X}, {Y})";

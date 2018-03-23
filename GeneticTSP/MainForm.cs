@@ -137,7 +137,7 @@ namespace GeneticTSP
         {
             TspbGeneration.Maximum = GASolver.Properties.MaxGenerations;
 
-            _gaSolver.StartSolving(new Progress<int>(p =>
+            _gaSolver.StartSolving(_currentItem.OptimalTourDistance, new Progress<int>(p =>
             {
                 TspbGeneration.Value = p;
                 TsslGeneration.Text = $"Generation {p} of {GASolver.Properties.MaxGenerations}";
@@ -260,7 +260,7 @@ namespace GeneticTSP
 
             double bestDistance = _gaSolver.CurrentBestDistance;
 
-            sb.AppendLine($"Finished in {elapsed / 1000} seconds.");
+            sb.AppendLine($"Finished in {(elapsed / 1000):0.##} seconds.");
             sb.AppendLine($"Best distance found: {bestDistance} (Optimal: {_currentItem.OptimalTourDistance}).");
 
             double distanceGap = 0;

@@ -32,7 +32,7 @@
             TournamentSize = tournamentSize;
             Elitism = elitism;
             CrossoverMethod = crossoverMethod;
-            InitialPopulationMethod = InitialPopulationMethod;
+            InitialPopulationMethod = initialPopulationMethod;
             GreedyInitialPopulationRate = greedyInitialPopulationRate;
         }
 
@@ -42,12 +42,14 @@
     {
         Ordered,
         Cycle,
-        ImprovedGreedy
+        ImprovedGreedy,
+        GreedyNearestNeighbour
     }
 
     public enum InitialPopulationMethod
     {
         Greedy,
-        Random
+        Random,
+        GreedyNearestNeighbour
     }
 }

@@ -12,12 +12,20 @@ namespace GeneticTSP
     public partial class MultiSolver : Form
     {
 
+        #region Fields
+
         private readonly object _lockObject = new object();
         private readonly int _runs;
         private int _started;
         private int _finished;
         private readonly Dictionary<GASolver, double> _solvers;
+        private double _min = double.MaxValue;
+        private double _max;
+        private double _optimal;
 
+        #endregion
+
+        #region Properties
 
         public int Started
         {
@@ -53,13 +61,76 @@ namespace GeneticTSP
             }
         }
 
+        public double Min
+        {
+            get => _min;
+            set
+            {
+                lock (_lockObject)
+                {
+                    BeginInvoke((Action)(() =>
+                    {
+                        _min = value;
+                        lblMin.Text = $"Min: {_min}";
+                    }));
+                }
+            }
+        }
+
+        public double Max
+        {
+            get => _max;
+            set
+            {
+                lock (_lockObject)
+                {
+                    BeginInvoke((Action)(() =>
+                    {
+                        _max = value;
+                        lblMax.Text = $"Max: {_max}";
+                    }));
+                }
+            }
+        }
+
+        public double Avg
+        {
+            set
+            {
+                lock (_lockObject)
+                {
+                    BeginInvoke((Action)(() =>
+                    {
+                        lblAvg.Text = $"Avg: {value:0.##}";
+                    }));
+                }
+            }
+        }
+
+        public double AvgTime
+        {
+            set
+            {
+                lock (_lockObject)
+                {
+                    BeginInvoke((Action)(() =>
+                    {
+                        lblAvgTime.Text = $"AvgTime: {value:0.##}";
+                    }));
+                }
+            }
+        }
+
+        #endregion
 
         public MultiSolver(GASolverProperties properties, int runs, TspLib95Item item)
         {
             InitializeComponent();
 
             _runs = runs;
+            _optimal = item.OptimalTourDistance;
             _solvers = new Dictionary<GASolver, double>();
+            var dists = new List<double>();
             pbFinished.Maximum = pbStarted.Maximum = _runs;
             lblTitle.Text = string.Format(lblTitle.Text, _runs, item.Problem.Name);
             lblFinished.Text = $"{_finished} / {_runs} finished";
@@ -83,8 +154,17 @@ namespace GeneticTSP
                 solver.Started += () => Started++;
                 solver.Stopped += timeElapsed =>
                 {
-                    _solvers[solver] = timeElapsed;
                     Finished++;
+                    _solvers[solver] = timeElapsed / 1000;
+                    dists.Add(solver.CurrentBestDistance);
+                    Avg = dists.Average();
+                    AvgTime = _solvers.Values.ToArray().Average();
+
+                    if (solver.CurrentBestDistance < _min)
+                        Min = solver.CurrentBestDistance;
+
+                    if (solver.CurrentBestDistance > _max)
+                        Max = solver.CurrentBestDistance;
 
                     BeginInvoke((Action)(() =>
                     {
@@ -99,7 +179,7 @@ namespace GeneticTSP
 
         private void MultiSolver_Shown(object sender, EventArgs e)
         {
-            _solvers.Keys.ToList().ForEach(solver => solver.StartSolving(null));
+            _solvers.Keys.ToList().ForEach(solver => solver.StartSolving(_optimal, null));
         }
 
     }

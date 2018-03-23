@@ -35,6 +35,10 @@
             this.lblStarted = new System.Windows.Forms.Label();
             this.lblFinished = new System.Windows.Forms.Label();
             this.chartDistances = new LiveCharts.WinForms.CartesianChart();
+            this.lblMin = new System.Windows.Forms.Label();
+            this.lblAvg = new System.Windows.Forms.Label();
+            this.lblMax = new System.Windows.Forms.Label();
+            this.lblAvgTime = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblTitle
@@ -87,11 +91,55 @@
             this.chartDistances.TabIndex = 5;
             this.chartDistances.Text = "cartesianChart1";
             // 
+            // lblMin
+            // 
+            this.lblMin.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMin.Location = new System.Drawing.Point(12, 460);
+            this.lblMin.Name = "lblMin";
+            this.lblMin.Size = new System.Drawing.Size(130, 26);
+            this.lblMin.TabIndex = 6;
+            this.lblMin.Text = "Min: 0";
+            this.lblMin.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblAvg
+            // 
+            this.lblAvg.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAvg.Location = new System.Drawing.Point(148, 460);
+            this.lblAvg.Name = "lblAvg";
+            this.lblAvg.Size = new System.Drawing.Size(130, 26);
+            this.lblAvg.TabIndex = 7;
+            this.lblAvg.Text = "Avg: 0";
+            this.lblAvg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblMax
+            // 
+            this.lblMax.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMax.Location = new System.Drawing.Point(284, 460);
+            this.lblMax.Name = "lblMax";
+            this.lblMax.Size = new System.Drawing.Size(130, 26);
+            this.lblMax.TabIndex = 8;
+            this.lblMax.Text = "Max: 0";
+            this.lblMax.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblAvgTime
+            // 
+            this.lblAvgTime.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAvgTime.Location = new System.Drawing.Point(420, 460);
+            this.lblAvgTime.Name = "lblAvgTime";
+            this.lblAvgTime.Size = new System.Drawing.Size(163, 26);
+            this.lblAvgTime.TabIndex = 9;
+            this.lblAvgTime.Text = "AvgTime: 0";
+            this.lblAvgTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // MultiSolver
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(595, 460);
+            this.ClientSize = new System.Drawing.Size(595, 495);
+            this.Controls.Add(this.lblAvgTime);
+            this.Controls.Add(this.lblMax);
+            this.Controls.Add(this.lblAvg);
+            this.Controls.Add(this.lblMin);
             this.Controls.Add(this.chartDistances);
             this.Controls.Add(this.lblFinished);
             this.Controls.Add(this.lblStarted);
@@ -121,5 +169,9 @@
         private System.Windows.Forms.Label lblStarted;
         private System.Windows.Forms.Label lblFinished;
         private LiveCharts.WinForms.CartesianChart chartDistances;
+        private System.Windows.Forms.Label lblMin;
+        private System.Windows.Forms.Label lblAvg;
+        private System.Windows.Forms.Label lblMax;
+        private System.Windows.Forms.Label lblAvgTime;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace GeneticTSP
 {
@@ -7,14 +8,16 @@ namespace GeneticTSP
 
         #region Public Methods
 
-        public static Tour Crossover(Tour parent1, Tour parent2, CrossoverMethod method)
+        public static Tour Crossover(Tour parent1, Tour parent2)
         {
-            switch (method)
+            switch (GASolver.Properties.CrossoverMethod)
             {
                 case CrossoverMethod.Cycle:
                     return CycleCrossover(parent1, parent2);
                 case CrossoverMethod.ImprovedGreedy:
                     return ImprovedGreedyCrossover(parent1, parent2);
+                case CrossoverMethod.GreedyNearestNeighbour:
+                    return GreedyNearestNeighbour(parent1);
                 default:
                     return OrderedCrossover(parent1, parent2);
             }
@@ -136,6 +139,43 @@ namespace GeneticTSP
                 child.SetCity(i, city);
                 parent1Dll.Remove(city);
                 parent2Dll.Remove(city);
+            }
+
+            return child;
+        }
+
+        private static Tour GreedyNearestNeighbour(Tour parent1)
+        {
+            var child = new Tour(false);
+            var parentCities = new List<City>(parent1.Cities);
+            int crossoverpoint = parentCities.Count / 2;
+            int i;
+
+            for (i = 0; i < crossoverpoint; i++)
+            {
+                child.SetCity(i, parentCities[0]);
+                parentCities.RemoveAt(0);
+            }
+
+            var currentCity = child.Cities[i - 1];
+            while (parentCities.Count != 0)
+            {
+                double bestDist = double.MaxValue;
+                City bestCity = null;
+
+                foreach (var city in parentCities)
+                {
+                    double tempDist = city.DistanceTo(currentCity);
+                    if (tempDist < bestDist)
+                    {
+                        bestDist = tempDist;
+                        bestCity = city;
+                    }
+                }
+
+                child.SetCity(i, bestCity);
+                parentCities.Remove(bestCity);
+                i++;
             }
 
             return child;

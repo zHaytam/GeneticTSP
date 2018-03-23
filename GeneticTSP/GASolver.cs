@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,7 +37,9 @@ namespace GeneticTSP
 
         #endregion
 
-        public GASolver() : this(new GASolverProperties(20, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.Greedy, 0.1)) { }
+        public GASolver() :
+            this(new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.GreedyNearestNeighbour, 0.1))
+        { }
 
         public GASolver(GASolverProperties properties)
         {
@@ -45,7 +48,7 @@ namespace GeneticTSP
 
         #region Public Methods
 
-        public void StartSolving(IProgress<int> progress)
+        public void StartSolving(double optimal, IProgress<int> progress)
         {
             _cancellationTokenSource = new CancellationTokenSource();
 
@@ -57,7 +60,7 @@ namespace GeneticTSP
                 NewFittest?.Invoke();
 
                 // Start
-                Start(progress);
+                Start(optimal, progress);
             },
             _cancellationTokenSource.Token);
 
@@ -70,11 +73,11 @@ namespace GeneticTSP
 
         #region Private Methods
 
-        private void Start(IProgress<int> progress)
+        private void Start(double optimal, IProgress<int> progress)
         {
             var stopwatch = Stopwatch.StartNew();
 
-            for (int i = 0; i < Properties.MaxGenerations; i++)
+            for (int i = 0; i < Properties.MaxGenerations && CurrentBestDistance > optimal; i++)
             {
                 if (_cancellationTokenSource.IsCancellationRequested)
                     break;
@@ -114,10 +117,10 @@ namespace GeneticTSP
             {
                 // Select parents with tournament selection
                 var parent1 = TournamentSelection();
-                var parent2 = TournamentSelection(parent1);
+                var parent2 = Properties.CrossoverMethod == CrossoverMethod.GreedyNearestNeighbour ? null : TournamentSelection(parent1);
 
                 // Generate a child tour with Crossover
-                var child = CrossoverHandler.Crossover(parent1, parent2, Properties.CrossoverMethod);
+                var child = CrossoverHandler.Crossover(parent1, parent2);
 
                 // Mutate the new child
                 Mutate(child);
