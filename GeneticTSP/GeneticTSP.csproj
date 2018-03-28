@@ -73,7 +73,8 @@
     <Compile Include="MultiSolver.Designer.cs">
       <DependentUpon>MultiSolver.cs</DependentUpon>
     </Compile>
-    <Compile Include="TwoOptHeuristic.cs" />
+    <Compile Include="MutationHandler.cs" />
+    <Compile Include="OptHeuristics.cs" />
     <Compile Include="CitiesHolder.cs" />
     <Compile Include="City.cs" />
     <Compile Include="CrossoverHandler.cs" />

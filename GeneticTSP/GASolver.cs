@@ -38,7 +38,8 @@ namespace GeneticTSP
         #endregion
 
         public GASolver() :
-            this(new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.GreedyNearestNeighbour, 0.1))
+            this(new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.Greedy, 0.1,
+                MutationMethod.PartialShuffle))
         { }
 
         public GASolver(GASolverProperties properties)
@@ -123,30 +124,15 @@ namespace GeneticTSP
                 var child = CrossoverHandler.Crossover(parent1, parent2);
 
                 // Mutate the new child
-                Mutate(child);
+                MutationHandler.Mutate(child);
 
                 // Apply 2-opt-heuristic
-                //child = TwoOptHeuristic.PerformOn(child);
-                TwoOptHeuristic.Apply(child);
+                OptHeuristics.ApplyTwoOpt(child);
 
                 newPop.Tours.Add(child);
             }
 
             CurrentPopulation = newPop;
-        }
-
-        private void Mutate(Tour tour)
-        {
-            for (int i = 0; i < tour.Size; i++)
-            {
-                if (CryptoRandom.NextDouble() >= Properties.MutationRate)
-                    continue;
-
-                int index = CryptoRandom.Next(tour.Size);
-                var temp = tour.Cities[i];
-                tour.SetCity(i, tour.Cities[index]);
-                tour.SetCity(index, temp);
-            }
         }
 
         private Tour TournamentSelection(Tour tourToExclude = null)

@@ -21,10 +21,13 @@
 
         public double GreedyInitialPopulationRate { get; set; }
 
+        public MutationMethod MutationMethod { get; set; }
+
         #endregion
 
         public GASolverProperties(int maxGenerations, int populationsSize, double mutationRate, int tournamentSize, bool elitism,
-            CrossoverMethod crossoverMethod, InitialPopulationMethod initialPopulationMethod, double greedyInitialPopulationRate)
+            CrossoverMethod crossoverMethod, InitialPopulationMethod initialPopulationMethod, double greedyInitialPopulationRate,
+            MutationMethod mutationMethod)
         {
             MaxGenerations = maxGenerations;
             PopulationsSize = populationsSize;
@@ -34,6 +37,7 @@
             CrossoverMethod = crossoverMethod;
             InitialPopulationMethod = initialPopulationMethod;
             GreedyInitialPopulationRate = greedyInitialPopulationRate;
+            MutationMethod = mutationMethod;
         }
 
     }
@@ -51,5 +55,11 @@
         Greedy,
         Random,
         GreedyNearestNeighbour
+    }
+
+    public enum MutationMethod
+    {
+        PartialShuffle,
+        ReverseSequence
     }
 }

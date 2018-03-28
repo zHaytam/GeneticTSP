@@ -55,6 +55,16 @@ namespace GeneticTSP
             _distance = _fitness = null;
         }
 
+        public void SwapCities(int index1, int index2)
+        {
+            var temp = Cities[index1];
+            Cities[index1] = Cities[index2];
+            Cities[index2] = temp;
+
+            // Clear the distance/fitness cache
+            _distance = _fitness = null;
+        }
+
         public bool ContainsCity(City city) => _ids.Contains(city.Id);
 
         public double GetDistance()
