@@ -39,7 +39,7 @@ namespace GeneticTSP
 
         public GASolver() :
             this(new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.Greedy, 0.1,
-                MutationMethod.PartialShuffle))
+                MutationMethod.ReverseSequence, SelectionMethod.Tournament, true))
         { }
 
         public GASolver(GASolverProperties properties)
@@ -117,8 +117,8 @@ namespace GeneticTSP
             for (int i = startingIndex; i < Properties.PopulationsSize; i++)
             {
                 // Select parents with tournament selection
-                var parent1 = TournamentSelection();
-                var parent2 = Properties.CrossoverMethod == CrossoverMethod.GreedyNearestNeighbour ? null : TournamentSelection(parent1);
+                var parent1 = SelectionHandler.Select(CurrentPopulation);
+                var parent2 = Properties.CrossoverMethod == CrossoverMethod.GreedyNearestNeighbour ? null : SelectionHandler.Select(CurrentPopulation);
 
                 // Generate a child tour with Crossover
                 var child = CrossoverHandler.Crossover(parent1, parent2);
@@ -127,34 +127,13 @@ namespace GeneticTSP
                 MutationHandler.Mutate(child);
 
                 // Apply 2-opt-heuristic
-                OptHeuristics.ApplyTwoOpt(child);
+                if (Properties.UseTwoOpt)
+                    OptHeuristics.ApplyTwoOpt(child);
 
                 newPop.Tours.Add(child);
             }
 
             CurrentPopulation = newPop;
-        }
-
-        private Tour TournamentSelection(Tour tourToExclude = null)
-        {
-            var tempPop = new Population(Properties.TournamentSize, false);
-
-            for (int i = 0; i < Properties.TournamentSize; i++)
-            {
-                int index = CryptoRandom.Next(CurrentPopulation.Size);
-                var tempTour = CurrentPopulation.Tours[index];
-
-                // In case we found the tour we wanted to tourToExclude
-                if (tourToExclude != null && tempTour == tourToExclude)
-                {
-                    i--;
-                    continue;
-                }
-
-                tempPop.Tours.Add(tempTour);
-            }
-
-            return tempPop.GetFittestTour();
         }
 
         #endregion

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using TspLibNet;
 using TspLibNet.Graph.EdgeWeights;
@@ -135,6 +136,39 @@ namespace GeneticTSP
 
         private void TsmiStartSolving_Click(object sender, EventArgs e)
         {
+            //properties.AddRange(new[]
+            //{
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Ordered, InitialPopulationMethod.Random, 0.1, MutationMethod.PartialShuffle, SelectionMethod.Rank),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Ordered, InitialPopulationMethod.Random, 0.1, MutationMethod.PartialShuffle, SelectionMethod.RouletteWheel),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Ordered, InitialPopulationMethod.Random, 0.1, MutationMethod.PartialShuffle, SelectionMethod.Tournament),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Ordered, InitialPopulationMethod.Random, 0.1, MutationMethod.ReverseSequence, SelectionMethod.Rank),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Ordered, InitialPopulationMethod.Random, 0.1, MutationMethod.ReverseSequence, SelectionMethod.RouletteWheel),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Ordered, InitialPopulationMethod.Random, 0.1, MutationMethod.ReverseSequence, SelectionMethod.Tournament),
+
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Cycle, InitialPopulationMethod.Random, 0.1, MutationMethod.PartialShuffle, SelectionMethod.Rank),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Cycle, InitialPopulationMethod.Random, 0.1, MutationMethod.PartialShuffle, SelectionMethod.RouletteWheel),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Cycle, InitialPopulationMethod.Random, 0.1, MutationMethod.PartialShuffle, SelectionMethod.Tournament),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Cycle, InitialPopulationMethod.Random, 0.1, MutationMethod.ReverseSequence, SelectionMethod.Rank),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Cycle, InitialPopulationMethod.Random, 0.1, MutationMethod.ReverseSequence, SelectionMethod.RouletteWheel),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.Cycle, InitialPopulationMethod.Random, 0.1, MutationMethod.ReverseSequence, SelectionMethod.Tournament),
+
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.GreedyNearestNeighbour, InitialPopulationMethod.GreedyNearestNeighbour, 0.1, MutationMethod.PartialShuffle, SelectionMethod.Rank),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.GreedyNearestNeighbour, InitialPopulationMethod.GreedyNearestNeighbour, 0.1, MutationMethod.PartialShuffle, SelectionMethod.RouletteWheel),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.GreedyNearestNeighbour, InitialPopulationMethod.GreedyNearestNeighbour, 0.1, MutationMethod.PartialShuffle, SelectionMethod.Tournament),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.GreedyNearestNeighbour, InitialPopulationMethod.GreedyNearestNeighbour, 0.1, MutationMethod.ReverseSequence, SelectionMethod.Rank),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.GreedyNearestNeighbour, InitialPopulationMethod.GreedyNearestNeighbour, 0.1, MutationMethod.ReverseSequence, SelectionMethod.RouletteWheel),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.GreedyNearestNeighbour, InitialPopulationMethod.GreedyNearestNeighbour, 0.1, MutationMethod.ReverseSequence, SelectionMethod.Tournament),
+
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.Greedy, 0.1, MutationMethod.PartialShuffle, SelectionMethod.Rank),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.Greedy, 0.1, MutationMethod.PartialShuffle, SelectionMethod.RouletteWheel),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.Greedy, 0.1, MutationMethod.PartialShuffle, SelectionMethod.Tournament),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.Greedy, 0.1, MutationMethod.ReverseSequence, SelectionMethod.Rank),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.Greedy, 0.1, MutationMethod.ReverseSequence, SelectionMethod.RouletteWheel),
+            //    new GASolverProperties(30, 20, 0.02, 5, true, CrossoverMethod.ImprovedGreedy, InitialPopulationMethod.Greedy, 0.1, MutationMethod.ReverseSequence, SelectionMethod.Tournament),
+            //});
+            //start();
+
+
             TspbGeneration.Maximum = GASolver.Properties.MaxGenerations;
 
             _gaSolver.StartSolving(_currentItem.OptimalTourDistance, new Progress<int>(p =>
@@ -142,6 +176,44 @@ namespace GeneticTSP
                 TspbGeneration.Value = p;
                 TsslGeneration.Text = $"Generation {p} of {GASolver.Properties.MaxGenerations}";
             }));
+        }
+
+        List<GASolverProperties> properties = new List<GASolverProperties>();
+        Dictionary<GASolverProperties, double> dict = new Dictionary<GASolverProperties, double>();
+
+        private void start()
+        {
+            GASolver.Properties = properties[0];
+
+            int c = 0;
+            var dists = new List<double>();
+
+            for (int i = 0; i < 20; i++)
+            {
+                var solver = new GASolver();
+                solver.Stopped += timeElapsed =>
+                {
+                    c++;
+                    dists.Add(solver.CurrentBestDistance);
+
+                    if (c == 20)
+                    {
+                        dict.Add(properties[0], dists.Average());
+                        properties.RemoveAt(0);
+
+                        if (properties.Count == 0)
+                        {
+                            Console.WriteLine(string.Join(Environment.NewLine, dict.Values));
+                            File.WriteAllText("results.txt", string.Join(Environment.NewLine, dict.Values));
+                            return;
+                        }
+
+                        Console.WriteLine($"{properties.Count} properties left.");
+                        start();
+                    }
+                };
+                solver.StartSolving(_currentItem.OptimalTourDistance, null);
+            }
         }
 
         private void TsmiStopSolving_Click(object sender, EventArgs e)
